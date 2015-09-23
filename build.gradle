@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'findbugs'
 
 repositories {
     jcenter()
@@ -6,7 +7,15 @@ repositories {
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'com.google.guava:guava:18.0'
 
     testCompile 'junit:junit:4.12'
 }
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+ }
 
