@@ -1,22 +1,73 @@
 package com.brianmearns.itero;
 
 import java.util.Iterator;
-import com.google.common.base.Function;
 
 /**
  * An iterator interface.
+ *
+ * <p>
+ * This is very similar in nature to the java standard {@link Iterator} interface, except
+ * that it can more effectively be used with immutable collections because it has no {@link Iterator#remove() remove()}
+ * method. So instead of throwing an {@link UnsupportedOperationException} when the method is invoked, you can just
+ * not have the method at all.
+ *
+ * <p>
+ * To get the classic standard {@link Iterator} interface, use the {@link #iterator()} method.
+ *
+ * <p>
+ * The {@link Itero} interface also provides some additional useful methods over the {@link Iterator} interface,
+ * such as {@link #nextElement()} and {@link #tryNext()}.
+ *
+ * <p>
+ * There are multiple common ways to iterate over an {@link Itero} object. For instance, using the traditional
+ * while loop with {@link #hasNext()} and {@link #next()}:
+ *
+ * <pre>{@code
+ *  Itero<E> itero;
+ * // .. initialize itero ...
+ * while(itero.hasNext()) {
+ *     E element = itero.next();
+ * }
+ * }</pre>
+ *
+ * <p>
+ * Or using a {@code while(true)} loop with {@link #tryNext()}:
+ *
+ * <pre>{@code
+ * Itero<E> itero;
+ * // .. initialize itero ...
+ * try {
+ *     while(true) {
+ *         E element = itero.tryNext();
+ *     }
+ * } catch (EndOfIterationException ignore) {
+ *     //Exception used as flow control. This may be an antipattern...
+ * }
+ * }</pre>
+ *
+ * <p>
+ * Or using a {@code for} loop with {@link #nextElement()} and {@link IteroElement#isValid()}:
+ *
+ * <pre>{@code
+ *  Itero<E> itero;
+ * // .. initialize itero ...
+ * for(IteroElement<E> next = itero.nextElement(); next.isValid(); next = itero.nextElement()) {
+ *     E element = next.getValue();
+ * }
+ * }</pre>
+ *
+ * <p>
+ * Or, because it implement's the {@link Iterable} interface, you can use it in a java for-each loop:
+ *
+ * <pre>{@code
+ *  Itero<E> itero;
+ * // .. initialize itero ...
+ * for(E element : itero) {
+ *     // ...
+ * }
+ * }</pre>
  */
-public interface Itero<E> extends Iteroable<E> {
-
-    /**
-     * This method ensures that the {@link Itero} interface also implements the
-     * {@link Iteroable} interface, which should be done by simply returning
-     * {@code this} object itself.
-     *
-     * @return This object, unaltered.
-     */
-    @Override
-    public Itero<E> iter();
+public interface Itero<E> extends Iterable<E> {
 
     /**
      * The {@code Itero} interface does <em>not</em> implement the {@link java.util.Iterator}
@@ -24,24 +75,28 @@ public interface Itero<E> extends Iteroable<E> {
      * the {@link java.util.Iterator#remove() remove()} method. However, this method,
      * which implements the {@link Iterable} interface, provides the alternate interface
      * for this same object.
+     *
+     * <p>
+     * When implementing this interface, you can return an {@link IteroIterator} which wraps
+     * this object in order to satisfy this interface simply.
      */
     @Override
-    public Iterator<E> iterator();
+    Iterator<E> iterator();
 
     /**
      * @return {@code true} if and only if this iterator has more elements.
      */
-    public boolean hasNext();
+    boolean hasNext();
 
     /**
-     * Returns the next element in the iteration. If the iteration has ended,
-     * as indicated by a {@code false} value returned by {@link #hasNext()}
-     * prior to this call, then the return value is <em>unspecified</em>.
+     * Returns the next element in the iteration. If the iteration has ended
+     * (as indicated by a {@code false} value returned by {@link #hasNext()}
+     * prior to this call), then the return value is <em>unspecified</em>.
      *
      * @return The next element in the iteration, if the iteration has not
      * ended.
      */
-    public E next();
+    E next();
 
     /**
      * An alternate interface to {@link #next()} which encapsulates both an
@@ -56,7 +111,7 @@ public interface Itero<E> extends Iteroable<E> {
      * or an {@linkplain IteroElement#invalid() invalid} {@code IteroElement} if
      * the iteration has ended.
      */
-    public IteroElement<E> nextElement();
+    IteroElement<E> nextElement();
 
     /**
      * Returns the next element in the iteration, or throws an {@link EndOfIterationException}
@@ -68,7 +123,7 @@ public interface Itero<E> extends Iteroable<E> {
      * @throws EndOfIterationException if the iteration has already ended and there
      * is no next element.
      */
-    public E tryNext() throws EndOfIterationException;
+    E tryNext() throws EndOfIterationException;
 
 }
 

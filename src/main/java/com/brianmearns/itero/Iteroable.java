@@ -1,48 +1,29 @@
 package com.brianmearns.itero;
 
+import javax.validation.constraints.NotNull;
+import java.util.Iterator;
+
+/**
+ * An {@link Iteroable} is an object which is associated with a collection of elements over which can be iterated.
+ *
+ * An {@code Iteroable} is to an {@link Itero} as an {@link Iterable} is to an {@link java.util.Iterator}
+ * in the java standard library.
+ *
+ * @param <E> The type of the elements in this object.
+ */
 public interface Iteroable<E> extends Iterable<E> {
 
-    public Itero<E> iter();
-    
     /**
-     * <p>
-     * Generates a new {@link Itero} which filters the elements of this object
-     * with the given callback function.
-     * </p>
+     * The defining method of this interface, it returns an {@link Itero} which iterates over
+     * the elements of this object.
      *
-     * <p>
-     * The returned {@link Itero} will iterate over exactly those elements from
-     * this object for which the given {@code callback} returns a {@code true},
-     * in the same order as this object.
-     * </p>
-     *
-     * @param callback The filter callback function which determines which
-     * elements from this iterable are included in the returned {@link Itero}.
-     *
-     * @return An {@link Itero} over those elements of this iterable which
-     * pass the given filter.
+     * @return An {@link Itero} over this object's elements.
      */
-    public Itero<E> filter(Function<E, Boolean> callback);
+    @NotNull
+    Itero<E> iter();
 
-    public <M> Itero<M> map(Function<E, M> callback);
-
-    public <M> Itero<M> flatMap(Function<E, Iteroable<M>> callback);
-
-    public EnumeratedElement<E> enumerate();
-
-    public EnumeratedElement<E> enumerate(long start);
-
-    /**
-     * <p>
-     * Create a new {@link Itero} over the elements in this object which
-     * ends iteration after iterating over an element for which the given
-     * callback returns a {@code false} value.
-     * </p>
-     */
-    public Itero<E> terminate(Function<E, Boolean> callback);
-
-    public Itero<E> terminateBefore(Function<E, Boolean> callback);
-
-
+    @Override
+    @NotNull
+    Iterator<E> iterator();
 }
 

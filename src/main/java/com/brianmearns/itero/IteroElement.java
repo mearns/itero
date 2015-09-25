@@ -14,7 +14,7 @@ package com.brianmearns.itero;
  *
  * <p>
  * There is no public constructor for this class, use the static factory functions
- * {@link #valid(T)} and {@link #invalid()}.
+ * {@link #valid(Object) valid(T)} and {@link #invalid()}.
  * </p>
  */
 public class IteroElement<E> {
@@ -31,7 +31,7 @@ public class IteroElement<E> {
      * @return A new valid {@link IteroElement} with the given value.
      */
     public static <T> IteroElement<T> valid(T value) {
-        return new IteroElement(true, value);
+        return new IteroElement<>(true, value);
     }
 
 
@@ -42,7 +42,7 @@ public class IteroElement<E> {
      * @return An invalid {@link IteroElement}.
      */
     public static <T> IteroElement<T> invalid() {
-        return new IteroElement(false);
+        return new IteroElement<>(false, null);
     }
 
     private IteroElement(boolean valid, E value) {
@@ -94,7 +94,7 @@ public class IteroElement<E> {
         if(valid) {
             return value;
         }
-        throw EndOfIterationException.instance();
+        throw new EndOfIterationException();
     }
 
 }
